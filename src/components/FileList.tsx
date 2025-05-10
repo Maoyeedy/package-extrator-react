@@ -1,6 +1,6 @@
 import React from 'react';
 import FileListItem from './FileListItem';
-import type { ExtractedFileContent } from '../UnityExtractor'; // Corrected import
+import type { ExtractedFileContent } from '../UnityExtractor';
 import { zip } from 'fflate'; // For zipping categories
 
 interface FileToZip {
@@ -34,15 +34,22 @@ const FileList: React.FC<FileListProps> = ({
     const allFiles: FileToZip[] = [];
 
     for (const [path, content] of Object.entries(files)) {
+      // Skip directories
+      if (!(content instanceof Uint8Array)) {
+        continue;
+      }
+
+      // Skip meta files if excluded
       if (excludeMeta && path.endsWith('.meta')) {
         continue;
       }
+
       const fileEntry = { path, content };
       allFiles.push(fileEntry);
 
       if (categorizeByExtension) {
-        const extension = path.split('.').pop()?.toLowerCase() || 'other';
-        if (!categorized[extension]) {
+        const extension = path.split('.').pop()?.toLowerCase() ?? 'other';
+        if (!(extension in categorized)) {
           categorized[extension] = [];
         }
         categorized[extension].push(fileEntry);
@@ -53,10 +60,10 @@ const FileList: React.FC<FileListProps> = ({
 
   const { categorized, allFiles } = getFilteredAndCategorizedFiles();
 
-  const downloadCategory = async (extension: string, categoryFiles: FileToZip[]) => {
+  const downloadCategory = (extension: string, categoryFiles: FileToZip[]) => {
     const filesToZip: Record<string, Uint8Array> = {};
     categoryFiles.forEach(file => {
-      const filePath = maintainStructure ? file.path : file.path.split('/').pop() || file.path;
+      const filePath = maintainStructure ? file.path : file.path.split('/').pop() ?? file.path;
       filesToZip[filePath] = file.content;
     });
 
@@ -96,7 +103,12 @@ const FileList: React.FC<FileListProps> = ({
               ))}
             </ul>
             {catFiles.length > 0 && (
-                <button onClick={() => downloadCategory(extension, catFiles)}>
+                <button
+                    type="button"
+                    onClick={() => {
+                        downloadCategory(extension, catFiles);
+                    }}
+                >
                     {downloadCategoryLabel(extension.toUpperCase())}
                 </button>
             )}

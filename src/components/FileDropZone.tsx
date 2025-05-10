@@ -12,7 +12,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({ onFileDrop, label, invalidF
     e.stopPropagation();
   };
 
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -27,7 +27,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({ onFileDrop, label, invalidF
     }
   };
 
-  const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];

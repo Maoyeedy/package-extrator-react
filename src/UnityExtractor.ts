@@ -12,7 +12,7 @@ export class UnityExtractClient {
 
     async extract(arrayBuffer: ArrayBuffer): Promise<ExtractedFileContent> {
         try {
-            const unzipped = gunzipSync(new Uint8Array(arrayBuffer));
+            const unzipped = await Promise.resolve(gunzipSync(new Uint8Array(arrayBuffer)));
             return this.parseTarball(unzipped);
         } catch (error) {
             throw error instanceof Error && error.message.includes('fflate')
@@ -73,7 +73,7 @@ export class UnityExtractClient {
             const parts = path.split('/');
             if (parts.length < 2) continue;
 
-            const filename = parts.pop()!;
+            const filename = parts.pop() ?? '';
             const basePath = parts.join('/');
 
             switch (filename) {
@@ -84,10 +84,10 @@ export class UnityExtractClient {
 
                         const assetPath = `${basePath}/asset`;
                         const assetContent = files[assetPath];
-                        if (assetContent) result[newPath] = assetContent;
+                        result[newPath] = assetContent;
 
-                        const metaContent = files[`${basePath}/asset.meta`] || files[`${basePath}/metaData`];
-                        if (metaContent) result[`${newPath}.meta`] = metaContent;
+                        const metaContent = files[`${basePath}/asset.meta`] ?? files[`${basePath}/metaData`];
+                        result[`${newPath}.meta`] = metaContent;
                     } catch {
                         continue;
                     }

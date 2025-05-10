@@ -23,7 +23,7 @@ function App() {
   const [files, setFiles] = useState<ExtractedFileContent>({});
   const [excludeMeta, setExcludeMeta] = useState(true);
   const [categorizeByExtension, setCategorizeByExtension] = useState(true);
-  const [maintainStructure, setMaintainStructure] = useState(false);
+  const [maintainStructure, setMaintainStructure] = useState(true);
   const [enablePreview, setEnablePreview] = useState(true);
   const [showFileSize, setShowFileSize] = useState(true);
   const [language, setLanguage] = useState<Language>('en');
@@ -37,8 +37,9 @@ function App() {
   }, []);
 
   const t = useCallback((key: TranslationKey, ...args: string[]) => {
-    const text = translations[language]?.[key] || translations.en[key];
-    return args.reduce((str, arg, i) => str.replace(`{${i}}`, arg), text);
+    const languageTranslations = translations[language];
+    const text = key in languageTranslations ? languageTranslations[key] : translations.en[key];
+    return args.reduce((str, arg, i) => str.replace(`{${i.toString()}}`, arg), text);
   }, [language]);
 
   const handleFileDrop = async (file: File) => {
@@ -60,7 +61,7 @@ function App() {
     const filesToZip: Record<string, Uint8Array> = {};
     for (const [path, content] of Object.entries(files)) {
       if (excludeMeta && path.endsWith('.meta')) continue;
-      const filePath = maintainStructure ? path : path.split('/').pop() || path;
+      const filePath = maintainStructure ? path : path.split('/').pop() ?? path;
       filesToZip[filePath] = content;
     }
 
@@ -93,7 +94,7 @@ function App() {
         onLanguageChange={setLanguage}
       />
       <FileDropZone
-        onFileDrop={handleFileDrop}
+        onFileDrop={(file) => void handleFileDrop(file)}
         label={t('dropZone')}
         invalidFileMessage={t('invalidFile')}
       />
@@ -112,7 +113,7 @@ function App() {
       />
       {Object.keys(files).length > 0 && !isLoading && (
         <div className="download-all">
-          <button onClick={handleDownloadAll}>{t('downloadAll')}</button>
+          <button type="button" onClick={handleDownloadAll}>{t('downloadAll')}</button>
         </div>
       )}
       {Object.keys(files).length > 0 && !isLoading && (

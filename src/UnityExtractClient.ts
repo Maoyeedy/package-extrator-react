@@ -6,7 +6,8 @@ export class UnityExtractClient {
     private decoder = new TextDecoder();
 
     async extract(arrayBuffer: ArrayBuffer): Promise<FileMap> {
-        return this.parseTarball(unzlibSync(new Uint8Array(arrayBuffer)));
+        const unzipped = await Promise.resolve(unzlibSync(new Uint8Array(arrayBuffer)));
+        return this.parseTarball(unzipped);
     }
 
     private parseTarball(data: Uint8Array): FileMap {
@@ -57,9 +58,7 @@ export class UnityExtractClient {
 
     private processAssetFile(files: FileMap, convertedFiles: FileMap, basePath: string, newPath: string): void {
         const assetPath = `${basePath}/asset`;
-        if (files[assetPath]) {
-            convertedFiles[newPath] = files[assetPath];
-        }
+        convertedFiles[newPath] = files[assetPath];
     }
 
     private processMetaFiles(files: FileMap, convertedFiles: FileMap, basePath: string, newPath: string): void {
@@ -69,16 +68,18 @@ export class UnityExtractClient {
             `${basePath}/metaData`
         ];
 
-        const metaFile = metaPaths.find(path => files[path]);
-        if (metaFile) {
-            convertedFiles[`${newPath}.meta`] = files[metaFile];
+        for (const path of metaPaths) {
+            if (path in files) {
+                convertedFiles[`${newPath}.meta`] = files[path];
+                break;
+            }
         }
     }
 
     private processRemainingFiles(files: FileMap, convertedFiles: FileMap): void {
         const excludedSuffixes = ['/pathname', '/asset', '/asset.meta', '/metaData'];
         Object.entries(files).forEach(([path, content]) => {
-            if (!excludedSuffixes.some(suffix => path.endsWith(suffix)) && !convertedFiles[path]) {
+            if (!excludedSuffixes.some(suffix => path.endsWith(suffix)) && !(path in convertedFiles)) {
                 convertedFiles[path] = content;
             }
         });

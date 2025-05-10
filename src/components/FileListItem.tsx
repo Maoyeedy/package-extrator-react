@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface FileListItemProps {
   path: string;
-  content: Uint8Array;
+  content?: Uint8Array;  // Make content optional to handle undefined cases
   maintainStructure: boolean;
   enablePreview: boolean;
   showFileSize: boolean;
@@ -12,11 +12,12 @@ const formatFileSize = (bytes: number): string => {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   if (bytes === 0) return '0 Byte';
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)).toString(), 10);
-  return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i];
+  const size = Math.round(bytes / Math.pow(1024, i)).toString();
+  return `${size} ${sizes[i]}`;
 };
 
 const isImageFile = (path: string): boolean => {
-  const extension = path.split('.').pop()?.toLowerCase() || '';
+  const extension = path.split('.').pop()?.toLowerCase() ?? '';
   return ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tga'].includes(extension);
 };
 
@@ -28,15 +29,30 @@ const FileListItem: React.FC<FileListItemProps> = ({
   showFileSize,
 }) => {
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const urlRef = useRef<string | null>(null);
+  const fileName = maintainStructure ? path : path.split('/').pop() ?? path;
 
-  const blob = new Blob([content], { type: 'application/octet-stream' });
-  const url = URL.createObjectURL(blob);
-  const fileName = maintainStructure ? path : path.split('/').pop() || path;
+  // Clean up the object URL when the component unmounts - this must be before any conditional returns
+  useEffect(() => {
+    return () => {
+      if (urlRef.current) {
+        URL.revokeObjectURL(urlRef.current);
+        urlRef.current = null;
+      }
+    };
+  }, []);
 
-  // Clean up the object URL when the component unmounts or URL changes
-  React.useEffect(() => {
-    return () => { URL.revokeObjectURL(url); };
-  }, [url]);
+  // Check if content is defined
+  if (!content) {
+    console.warn(`Content is undefined for file: ${path}`);
+    return <li className="file-list-item">Error loading: {fileName}</li>;
+  }
+
+  // Only create blob and URL if content exists and URL hasn't been created yet
+  if (!urlRef.current) {
+    const blob = new Blob([content], { type: 'application/octet-stream' });
+    urlRef.current = URL.createObjectURL(blob);
+  }
 
   const handleMouseOver = () => {
     if (enablePreview && isImageFile(path)) {
@@ -53,7 +69,7 @@ const FileListItem: React.FC<FileListItemProps> = ({
   return (
     <li className="file-list-item">
       <a
-        href={url}
+        href={urlRef.current || '#'}
         download={fileName}
         onMouseOver={handleMouseOver}
         onMouseOut={handleMouseOut}
@@ -66,7 +82,7 @@ const FileListItem: React.FC<FileListItemProps> = ({
         </span>
       )}
       {enablePreview && isImageFile(path) && isPreviewVisible && (
-        <img src={url} alt={`${fileName} preview`} className="preview" />
+        <img src={urlRef.current || ''} alt={`${fileName} preview`} className="preview" />
       )}
     </li>
   );
