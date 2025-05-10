@@ -49,6 +49,23 @@ export const translations = {
     errorMessage: "패키지 처리 중 오류가 발생했습니다. 자세한 내용은 콘솔을 확인하세요.",
     invalidFile: "Unity 패키지 파일(.unitypackage)을 드롭해주세요.",
     processing: "처리중..."
+  },
+  zh: {
+    title: "Package Extractor React",
+    description: "你可以在该页面中单独提取 .unitypackage 内的贴图、模型等其他文件。",
+    creator: "作者：",
+    repository: "仓库：",
+    dropZone: "将 .unitypackage 文件拖拽到这里",
+    excludeMeta: "不包括 .meta 文件",
+    categorizeByExtension: "按文件扩展名分类",
+    maintainStructure: "保持文件结构",
+    enablePreview: "启用贴图预览",
+    showFileSize: "显示文件大小",
+    downloadAll: "全部下载为 ZIP",
+    downloadCategory: "将 {0} 下载为 ZIP",
+    errorMessage: "处理包时发生错误。请查看控制台获取详细信息。",
+    invalidFile: "请拖入 Unity 包文件（.unitypackage）。",
+    processing: "处理中..."
   }
 } as const;
 
