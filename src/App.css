@@ -1,0 +1,228 @@
+:root {
+    /* Colors */
+    --color-primary: #3498db;
+    --color-primary-dark: #2980b9;
+    --color-text: #333;
+    --color-text-muted: #666;
+    --color-surface: #fff;
+    --color-background: #f0f0f0;
+    --color-hover: #d6eaf8;
+    --color-border: #eee;
+
+    /* Border Radius */
+    --radius-sm: 0.3125em;    /* 5px */
+    --radius: 0.5em;          /* 8px */
+
+    /* Spacing */
+    --space-xs: 0.25em;    /* 4px */
+    --space-sm: 0.5em;     /* 8px */
+    --space: 1em;          /* 16px */
+    --space-lg: 1.5em;     /* 24px */
+
+    /* Typography */
+    --line-height: 1.4;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 5px rgba(0,0,0,0.05);
+    --shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+body {
+    margin: 0;
+    font-family: 'Noto Sans', 'Noto Sans JP', 'Noto Sans KR', Arial, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: var(--line-height);
+}
+
+.App {
+    max-width: 800px;
+    padding: var(--space-lg);
+    background-color: var(--color-surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 0 auto;
+}
+
+#root {
+    padding: 50px;
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 0.75em;
+}
+
+.App p,
+.App div > label,
+.App div > span
+{
+    text-align: left;
+}
+
+.App > p {
+    text-align: left;
+}
+
+.App h1,
+.App .download-all,
+#dropZone {
+    text-align: center;
+}
+
+#dropZone {
+    border: 2px dashed var(--color-primary);
+    border-radius: var(--radius);
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: var(--space) 0;
+    background-color: var(--color-surface);
+    transition: background-color 0.2s;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    padding: var(--space);
+    font-size: 1.2em;
+    font-style: italic;
+    color: var(--color-text-muted);
+}
+
+#dropZone:hover {
+    background-color: var(--color-hover);
+    box-shadow: var(--shadow);
+}
+
+.controls {
+    margin-bottom: var(--space);
+    padding: var(--space);
+    background-color: var(--color-surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.checkbox-container {
+    margin-bottom: var(--space-sm);
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-right: var(--space-sm);
+}
+
+.checkbox-container label {
+    font-weight: normal;
+    text-align: left !important;
+}
+
+#fileListContainer ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.category {
+    margin-top: var(--space);
+    background-color: var(--color-surface);
+    padding: var(--space);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.category h3 {
+    margin-top: 0;
+    margin-bottom: var(--space-sm);
+    color: var(--color-primary);
+}
+
+.download-all {
+    margin-top: 20px;
+    text-align: center;
+}
+
+button {
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    border: none;
+    padding: var(--space-sm) var(--space);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 0;
+    font-size: 1em;
+}
+
+button:hover {
+    background-color: var(--color-primary-dark);
+}
+
+a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.preview {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    margin-left: 10px;
+    max-width: 200px;
+    max-height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 1000;
+    background-color: white;
+}
+
+.file-list-item {
+    margin-bottom: var(--space-xs);
+    position: relative;
+    padding: var(--space-xs);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    text-align: left;
+    font-size: 0.95em;
+    line-height: var(--line-height);
+}
+
+.file-list-item:last-child {
+    border-bottom: none;
+}
+
+.file-list-item a {
+    flex-grow: 1;
+}
+
+#language-select {
+    padding: var(--space-sm) var(--space);
+    margin-bottom: var(--space);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    font-size: 0.9em;
+}
+
+label[for="language-select"] {
+    font-weight: bold;
+    text-align: left;
+}
+
+.logo, .logo.react, .card, .read-the-docs {
+    display: none;
+}
+
+.file-info {
+    font-size: 0.75em;
+    color: var(--color-text-muted);
+}

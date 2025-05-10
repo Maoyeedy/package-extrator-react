@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unity Package Extractor (Browser)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans', 'Noto Sans JP', 'Noto Sans KR', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        #dropZone {
+            border: 2px dashed #3498db;
+            border-radius: 20px;
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #ecf0f1;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        #dropZone:hover {
+            background-color: #d6eaf8;
+        }
+        #fileList {
+            list-style-type: none;
+            padding: 0;
+        }
+        #fileList li {
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .category {
+            margin-top: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .category h3 {
+            margin-bottom: 10px;
+            color: #2980b9;
+        }
+        .download-all {
+            margin-top: 20px;
+            text-align: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .checkbox-container {
+            margin-bottom: 10px;
+        }
+        .preview {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            max-width: 200px;
+            max-height: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+        }
+        .file-info {
+            font-size: 0.8em;
+            color: #666;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 data-lang="title">Package Extractor</h1>
+    <p><span data-lang="description">You can individually retrieve textures, model data, and other files within the .unitypackage extension from your browser. </span></p>
+
+    <p><span data-lang="repository">Repository: </span><a href="https://github.com/peraperavrc/package-extractor" target="_blank">peraperavrc/package-extractor</a></p>
+    <p><span data-lang="creator">Created by </span><a href="https://x.com/peraperavrc" target="_blank">@peraperavrc</a></p>
+
+    <div id="dropZone" data-lang="dropZone">Drag and drop Unity package here</div>
+    <input type="file" id="fileInput" style="display: none;" accept=".unitypackage">
+    <div class="checkbox-container">
+        <input type="checkbox" id="excludeMeta" checked>
+        <label for="excludeMeta" data-lang="excludeMeta">Exclude .meta files</label>
+    </div>
+    <div class="checkbox-container">
+        <input type="checkbox" id="categorizeByExtension" checked>
+        <label for="categorizeByExtension" data-lang="categorizeByExtension">Categorize by file extension</label>
+    </div>
+    <div class="checkbox-container">
+        <input type="checkbox" id="maintainStructure">
+        <label for="maintainStructure" data-lang="maintainStructure">Maintain file structure</label>
+    </div>
+    <div class="checkbox-container">
+        <input type="checkbox" id="enablePreview" checked>
+        <label for="enablePreview" data-lang="enablePreview">Enable texture preview</label>
+    </div>
+    <div class="checkbox-container">
+        <input type="checkbox" id="showFileSize" checked>
+        <label for="showFileSize" data-lang="showFileSize">Show file size</label>
+    </div>
+    <div id="fileList"></div>
+    <div class="download-all">
+        <button id="downloadAllBtn" style="display: none;" data-lang="downloadAll">Download All as ZIP</button>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Package Extractor",
+                description: "You can individually retrieve textures, model data, and other files within the .unitypackage extension from your browser. ",
+                "description-end": "This implementation is based on the ",
+                creator: "Created by ",
+                repository: "Repository: ",
+                dropZone: "Drag and drop .unitypackage here",
+                excludeMeta: "Exclude .meta files",
+                categorizeByExtension: "Categorize by file extension",
+                maintainStructure: "Maintain file structure",
+                enablePreview: "Enable texture preview",
+                showFileSize: "Show file size",
+                downloadAll: "Download All as ZIP",
+                downloadCategory: "Download {0} as ZIP",
+                errorMessage: "An error occurred while processing the package. Please check the console for details.",
+                invalidFile: "Please drop a Unity package file (.unitypackage)."
+            },
+            ja: {
+                title: "開ける君",
+                description: "ブラウザーから.unitypackageの拡張子の中にあるテクスチャやモデルデータを見ることができます。スクリプトはクライアントサイドのみ（自分のブラウザ）で動作します。",
+                "description-end": "この実装はunity-package-extractライブラリを参考にしています。",
+                creator: "作成者: ",
+                repository: "リポジトリ: ",
+                dropZone: ".unitypackageをここにドラッグ＆ドロップしてください",
+                excludeMeta: ".metaファイルを除外する",
+                categorizeByExtension: "ファイル拡張子で分類する",
+                maintainStructure: "ファイル構造を維持する",
+                enablePreview: "テクスチャのプレビューを有効にする",
+                showFileSize: "ファイルサイズを表示する",
+                downloadAll: "すべてをZIPでダウンロード",
+                downloadCategory: "{0}をZIPでダウンロード",
+                errorMessage: "パッケージの処理中にエラーが発生しました。詳細はコンソールを確認してください。",
+                invalidFile: "Unityパッケージファイル（.unitypackage）をドロップしてください。"
+            },
+            ko: {
+                title: "Package Extractor",
+                description: "브라우저에서 .unitypackage 확장자 내의 텍스처, 모델 데이터 등을 개별적으로 가져올 수 있습니다. ",
+                "description-end": "이 구현은 ",
+                creator: "제작자: ",
+                repository: "리포지토리: ",
+                dropZone: ".unitypackage를 여기에 드래그 앤 드롭하세요",
+                excludeMeta: ".meta 파일 제외",
+                categorizeByExtension: "파일 확장자별로 분류",
+                maintainStructure: "파일 구조 유지",
+                enablePreview: "텍스처 미리보기 활성화",
+                showFileSize: "파일 크기 표시",
+                downloadAll: "모두 ZIP으로 다운로드",
+                downloadCategory: "{0}을(를) ZIP으로 다운로드",
+                errorMessage: "패키지 처리 중 오류가 발생했습니다. 자세한 내용은 콘솔을 확인하세요.",
+                invalidFile: "Unity 패키지 파일(.unitypackage)을 드롭해주세요."
+            }
+        };
+
+        let currentLanguage = navigator.language.split('-')[0];
+        if (!translations[currentLanguage]) {
+            currentLanguage = 'en';
+        }
+
+        function updateLanguage(lang) {
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                const key = el.getAttribute('data-lang');
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        class UnityExtractClient {
+            constructor() {}
+
+            async extract(arrayBuffer) {
+                const unzipped = pako.ungzip(new Uint8Array(arrayBuffer));
+                return this.parseTarball(unzipped);
+            }
+
+            parseTarball(data) {
+                const files = {};
+                let offset = 0;
+
+                while (offset < data.length) {
+                    const header = data.slice(offset, offset + 512);
+                    const nameBuffer = header.slice(0, 100);
+                    const name = new TextDecoder().decode(nameBuffer).replace(/\0/g, '').trim();
+
+                    const sizeBuffer = header.slice(124, 136);
+                    const size = parseInt(new TextDecoder().decode(sizeBuffer).trim(), 8);
+
+                    if (size > 0) {
+                        const content = data.slice(offset + 512, offset + 512 + size);
+                        files[name] = content;
+                    }
+
+                    offset += 512 + Math.ceil(size / 512) * 512;
+                }
+
+                return this.convert(files);
+            }
+
+            convert(files) {
+                const convertedFiles = {};
+                const directories = Object.keys(files).filter(filename => filename.endsWith('/pathname'));
+
+                for (const dir of directories) {
+                    const basePath = dir.replace('/pathname', '');
+                    const pathContent = new TextDecoder().decode(files[dir]);
+                    const newPath = pathContent.split('\n')[0];  // Only use the first line
+
+                    const assetPath = `${basePath}/asset`;
+                    const metaPath1 = `${basePath}/asset.meta`;
+                    const metaPath2 = `${basePath}/metaData`;
+
+                    if (files[assetPath]) {
+                        convertedFiles[newPath] = files[assetPath];
+                    }
+
+                    if (files[metaPath1]) {
+                        convertedFiles[`${newPath}.meta`] = files[metaPath1];
+                    } else if (files[metaPath2]) {
+                        convertedFiles[`${newPath}.meta`] = files[metaPath2];
+                    }
+                }
+
+                return convertedFiles;
+            }
+        }
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const excludeMetaCheckbox = document.getElementById('excludeMeta');
+        const categorizeByExtensionCheckbox = document.getElementById('categorizeByExtension');
+        const maintainStructureCheckbox = document.getElementById('maintainStructure');
+        const enablePreviewCheckbox = document.getElementById('enablePreview');
+        const showFileSizeCheckbox = document.getElementById('showFileSize');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const extractor = new UnityExtractClient();
+        let extractedFiles = {};
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.unitypackage')) {
+                    await processUnityPackage(file);
+                } else {
+                    alert(translations[currentLanguage].invalidFile);
+                }
+            }
+        });
+
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', async (e) => {
+            const files = e.target.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.unitypackage')) {
+                    await processUnityPackage(file);
+                } else {
+                    alert(translations[currentLanguage].invalidFile);
+                }
+            }
+        });
+
+        async function processUnityPackage(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                console.log('Package data length:', arrayBuffer.byteLength);
+
+                extractedFiles = await extractor.extract(arrayBuffer);
+                console.log('Extracted files:', Object.keys(extractedFiles));
+
+                displayExtractedFiles(extractedFiles);
+                downloadAllBtn.style.display = 'block';
+            } catch (error) {
+                console.error('Error processing Unity package:', error);
+                alert(translations[currentLanguage].errorMessage);
+            }
+        }
+
+        function displayExtractedFiles(files) {
+            fileList.innerHTML = '';
+            const categorizedFiles = {};
+
+            for (const [path, content] of Object.entries(files)) {
+                if (excludeMetaCheckbox.checked && path.endsWith('.meta')) {
+                    continue;
+                }
+
+                const extension = path.split('.').pop().toLowerCase();
+                if (!categorizedFiles[extension]) {
+                    categorizedFiles[extension] = [];
+                }
+                categorizedFiles[extension].push({ path, content });
+            }
+
+            if (categorizeByExtensionCheckbox.checked) {
+                for (const [extension, files] of Object.entries(categorizedFiles)) {
+                    const category = document.createElement('div');
+                    category.className = 'category';
+                    const categoryTitle = document.createElement('h3');
+                    categoryTitle.textContent = extension.toUpperCase();
+                    category.appendChild(categoryTitle);
+
+                    const categoryList = document.createElement('ul');
+                    files.forEach(file => {
+                        const li = createFileListItem(file.path, file.content);
+                        categoryList.appendChild(li);
+                    });
+                    category.appendChild(categoryList);
+
+                    const downloadCategoryBtn = document.createElement('button');
+                    downloadCategoryBtn.textContent = translations[currentLanguage].downloadCategory.replace('{0}', extension.toUpperCase());
+                    downloadCategoryBtn.addEventListener('click', () => downloadCategory(extension, files));
+                    category.appendChild(downloadCategoryBtn);
+
+                    fileList.appendChild(category);
+                }
+            } else {
+                const allFiles = Object.values(categorizedFiles).flat();
+                const ul = document.createElement('ul');
+                allFiles.forEach(file => {
+                    const li = createFileListItem(file.path, file.content);
+                    ul.appendChild(li);
+                });
+                fileList.appendChild(ul);
+            }
+        }
+
+        function createFileListItem(path, content) {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            const blob = new Blob([content], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            a.href = url;
+            a.textContent = maintainStructureCheckbox.checked ? path : path.split('/').pop();
+            a.download = maintainStructureCheckbox.checked ? path : path.split('/').pop();
+            li.appendChild(a);
+
+            if (showFileSizeCheckbox.checked) {
+                const fileSize = document.createElement('span');
+                fileSize.className = 'file-info';
+                fileSize.textContent = ` (${formatFileSize(content.byteLength)})`;
+                li.appendChild(fileSize);
+            }
+
+            if (enablePreviewCheckbox.checked && isImageFile(path)) {
+                const preview = document.createElement('img');
+                preview.className = 'preview';
+                preview.src = url;
+                li.appendChild(preview);
+
+                a.addEventListener('mouseover', () => {
+                    preview.style.display = 'block';
+                });
+
+                a.addEventListener('mouseout', () => {
+                    preview.style.display = 'none';
+                });
+            }
+
+            return li;
+        }
+
+        function formatFileSize(bytes) {
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            if (bytes === 0) return '0 Byte';
+            const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+            return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+        }
+
+        function isImageFile(path) {
+            const extension = path.split('.').pop().toLowerCase();
+            return ['png', 'jpg', 'jpeg', 'gif', 'bmp'].includes(extension);
+        }
+
+        async function downloadCategory(extension, files) {
+            const zip = new JSZip();
+            files.forEach(file => {
+                const filePath = maintainStructureCheckbox.checked ? file.path : file.path.split('/').pop();
+                zip.file(filePath, file.content);
+            });
+            const content = await zip.generateAsync({ type: 'blob' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(content);
+            link.download = `${extension}_files.zip`;
+            link.click();
+        }
+
+        async function downloadAll() {
+            const zip = new JSZip();
+            for (const [path, content] of Object.entries(extractedFiles)) {
+                if (excludeMetaCheckbox.checked && path.endsWith('.meta')) {
+                    continue;
+                }
+                const filePath = maintainStructureCheckbox.checked ? path : path.split('/').pop();
+                zip.file(filePath, content);
+            }
+            const content = await zip.generateAsync({ type: 'blob' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(content);
+            link.download = 'all_files.zip';
+            link.click();
+        }
+
+        excludeMetaCheckbox.addEventListener('change', () => {
+            displayExtractedFiles(extractedFiles);
+        });
+
+        categorizeByExtensionCheckbox.addEventListener('change', () => {
+            displayExtractedFiles(extractedFiles);
+        });
+
+        maintainStructureCheckbox.addEventListener('change', () => {
+            displayExtractedFiles(extractedFiles);
+        });
+
+        downloadAllBtn.addEventListener('click', downloadAll);
+
+        // Initialize language
+        updateLanguage(currentLanguage);
+    </script>
+</body>
+</html>
