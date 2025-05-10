@@ -1,7 +1,14 @@
 {
-  "name": "unity-package-extractor-vite",
+  "name": "package-extractor-react",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "React/Vite/TypeScript rewrite of the Unity Package Extractor with fflate for fast extraction",
+  "author": "maoyeedy",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maoyeedy/package-extractor-react"
+  },
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
