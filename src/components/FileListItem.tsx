@@ -35,7 +35,7 @@ const FileListItem: React.FC<FileListItemProps> = ({
 
   // Clean up the object URL when the component unmounts or URL changes
   React.useEffect(() => {
-    return () => URL.revokeObjectURL(url);
+    return () => { URL.revokeObjectURL(url); };
   }, [url]);
 
   const handleMouseOver = () => {

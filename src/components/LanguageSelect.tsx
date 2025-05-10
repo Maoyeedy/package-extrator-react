@@ -14,7 +14,7 @@ export function LanguageSelect({
       <select
         id="language-select"
         value={currentLanguage}
-        onChange={(e) => onLanguageChange(e.target.value as Language)}
+        onChange={(e) => { onLanguageChange(e.target.value as Language); }}
       >
         {Object.keys(translations).map((lang) => (
           <option key={lang} value={lang}>

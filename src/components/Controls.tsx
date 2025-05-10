@@ -77,7 +77,7 @@ function Checkbox({ id, checked, onChange, label }: CheckboxProps) {
         type="checkbox"
         id={id}
         checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        onChange={(e) => { onChange(e.target.checked); }}
       />
       <label htmlFor={id}>{label}</label>
     </div>

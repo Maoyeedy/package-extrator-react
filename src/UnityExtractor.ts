@@ -1,8 +1,6 @@
 import { gunzipSync } from 'fflate';
 
-export interface ExtractedFileContent {
-    [filePath: string]: Uint8Array;
-}
+export type ExtractedFileContent = Record<string, Uint8Array>;
 
 interface TarHeader {
     name: string;

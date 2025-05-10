@@ -18,9 +18,7 @@ interface FileListProps {
   downloadCategoryLabel: (category: string) => string;
 }
 
-interface CategorizedFiles {
-  [extension: string]: FileToZip[];
-}
+type CategorizedFiles = Record<string, FileToZip[]>;
 
 const FileList: React.FC<FileListProps> = ({
   files,
