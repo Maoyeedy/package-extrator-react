@@ -1,0 +1,2 @@
+- [ ] Search filter
+- [ ] Fix image preview
