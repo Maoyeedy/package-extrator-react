@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    title: "Package Extractor",
+    title: "Package Extractor React",
     description: "You can individually retrieve textures, model data, and other files within the .unitypackage extension from your browser. ",
     creator: "Created by ",
     repository: "Repository: ",
@@ -17,7 +17,7 @@ export const translations = {
     processing: "Processing..."
   },
   ja: {
-    title: "開ける君",
+    title: "Package Extractor React",
     description: "ブラウザーから.unitypackageの拡張子の中にあるテクスチャやモデルデータを見ることができます。スクリプトはクライアントサイドのみ（自分のブラウザ）で動作します。",
     creator: "作成者: ",
     repository: "リポジトリ: ",
@@ -34,7 +34,7 @@ export const translations = {
     processing: "処理中..."
   },
   ko: {
-    title: "Package Extractor",
+    title: "Package Extractor React",
     description: "브라우저에서 .unitypackage 확장자 내의 텍스처, 모델 데이터 등을 개별적으로 가져올 수 있습니다. ",
     creator: "제작자: ",
     repository: "리포지토리: ",
