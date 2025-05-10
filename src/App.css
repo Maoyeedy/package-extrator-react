@@ -190,6 +190,7 @@ a:hover {
     padding: var(--space-xs);
     border-bottom: 1px solid var(--color-border);
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     text-align: left;
     font-size: 0.95em;
