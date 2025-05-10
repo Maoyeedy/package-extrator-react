@@ -12,20 +12,20 @@ export function Header({ t }: HeaderProps) {
       <p>
         {t('repository')}{' '}
         <a
-          href="https://github.com/Maoyeedy/package-extrator-react"
+          href="https://github.com/maoyeedy/package-extractor-react"
           target="_blank"
           rel="noopener noreferrer"
         >
-          package-extrator-react
+          maoyeedy/package-extractor-react
         </a>
-        {' / '}
+        {/* {' / '}
         <a
           href="https://github.com/peraperavrc/package-extractor"
           target="_blank"
           rel="noopener noreferrer"
         >
           package-extractor (original)
-        </a>
+        </a> */}
       </p>
       <p>
         {t('creator')}{' '}
@@ -36,13 +36,13 @@ export function Header({ t }: HeaderProps) {
         >
           @maoyeedy
         </a>
-        {' / '}
+        {', '}
         <a
           href="https://x.com/peraperavrc"
           target="_blank"
           rel="noopener noreferrer"
         >
-          @peraperavrc (original)
+          @peraperavrc
         </a>
       </p>
     </header>
