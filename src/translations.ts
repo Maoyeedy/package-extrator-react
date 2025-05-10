@@ -13,7 +13,8 @@ export const translations = {
     downloadAll: "Download All as ZIP",
     downloadCategory: "Download {0} as ZIP",
     errorMessage: "An error occurred while processing the package. Please check the console for details.",
-    invalidFile: "Please drop a Unity package file (.unitypackage)."
+    invalidFile: "Please drop a Unity package file (.unitypackage).",
+    processing: "Processing..."
   },
   ja: {
     title: "開ける君",
@@ -29,7 +30,8 @@ export const translations = {
     downloadAll: "すべてをZIPでダウンロード",
     downloadCategory: "{0}をZIPでダウンロード",
     errorMessage: "パッケージの処理中にエラーが発生しました。詳細はコンソールを確認してください。",
-    invalidFile: "Unityパッケージファイル（.unitypackage）をドロップしてください。"
+    invalidFile: "Unityパッケージファイル（.unitypackage）をドロップしてください。",
+    processing: "処理中..."
   },
   ko: {
     title: "Package Extractor",
@@ -45,7 +47,8 @@ export const translations = {
     downloadAll: "모두 ZIP으로 다운로드",
     downloadCategory: "{0}을(를) ZIP으로 다운로드",
     errorMessage: "패키지 처리 중 오류가 발생했습니다. 자세한 내용은 콘솔을 확인하세요.",
-    invalidFile: "Unity 패키지 파일(.unitypackage)을 드롭해주세요."
+    invalidFile: "Unity 패키지 파일(.unitypackage)을 드롭해주세요.",
+    processing: "처리중..."
   }
 } as const;
 

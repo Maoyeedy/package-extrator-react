@@ -101,7 +101,7 @@ function App() {
       />
       <FileDropZone
         onFileDrop={(file) => void handleFileDrop(file)}
-        label={t('dropZone')}
+        label={isLoading ? t('processing') : t('dropZone')}
         invalidFileMessage={t('invalidFile')}
       />
       <Controls
