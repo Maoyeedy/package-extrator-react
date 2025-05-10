@@ -10,21 +10,21 @@
     --color-border: #eee;
 
     /* Border Radius */
-    --radius-sm: 0.3125em;    /* 5px */
-    --radius: 0.5em;          /* 8px */
+    --radius-sm: 0.3125em;
+    --radius: 0.5em;
 
     /* Spacing */
-    --space-xs: 0.25em;    /* 4px */
-    --space-sm: 0.5em;     /* 8px */
-    --space: 1em;          /* 16px */
-    --space-lg: 1.5em;     /* 24px */
+    --space-xs: 0.25em;
+    --space-sm: 0.5em;
+    --space: 1em;
+    --space-lg: 1.5em;
 
     /* Typography */
     --line-height: 1.4;
 
     /* Shadows */
-    --shadow-sm: 0 2px 5px rgba(0,0,0,0.05);
-    --shadow: 0 2px 10px rgba(0,0,0,0.1);
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 body {
@@ -56,20 +56,25 @@ h1 {
 }
 
 .App p,
-.App div > label,
-.App div > span
-{
+.App div>label,
+.App div>span {
     text-align: left;
 }
 
-.App > p {
-    text-align: left;
-}
-
-.App h1,
-.App .download-all,
-#dropZone {
+.App h1 {
     text-align: center;
+}
+
+.download-all {
+    text-align: left;
+}
+
+.download-all>button {
+    background-color: #222 !important;
+}
+
+.download-all>button:hover {
+    background-color: #000 !important;
 }
 
 #dropZone {
@@ -136,12 +141,7 @@ h1 {
 .category h3 {
     margin-top: 0;
     margin-bottom: var(--space-sm);
-    color: var(--color-primary);
-}
-
-.download-all {
-    margin-top: 20px;
-    text-align: center;
+    color: var(--color-text);
 }
 
 button {
@@ -178,7 +178,7 @@ a:hover {
     max-height: 200px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: none;
     z-index: 1000;
     background-color: white;
@@ -218,7 +218,10 @@ label[for="language-select"] {
     text-align: left;
 }
 
-.logo, .logo.react, .card, .read-the-docs {
+.logo,
+.logo.react,
+.card,
+.read-the-docs {
     display: none;
 }
 
