@@ -45,9 +45,12 @@ function App() {
   const handleFileDrop = async (file: File) => {
     setIsLoading(true);
     setFiles({});
+    const startTime = performance.now();
     try {
       const buffer = await file.arrayBuffer();
       const extracted = await extractor.extract(buffer);
+      const endTime = performance.now();
+      console.log(`Extraction completed in ${(endTime - startTime).toFixed(2)}ms`);
       setFiles(extracted);
     } catch (error) {
       console.error('Error:', error);
@@ -58,6 +61,7 @@ function App() {
   };
 
   const handleDownloadAll = () => {
+    const startTime = performance.now();
     const filesToZip: Record<string, Uint8Array> = {};
     for (const [path, content] of Object.entries(files)) {
       if (excludeMeta && path.endsWith('.meta')) continue;
@@ -71,6 +75,8 @@ function App() {
     }
 
     zip(filesToZip, (err, data) => {
+      const endTime = performance.now();
+      console.log(`Zip creation completed in ${(endTime - startTime).toFixed(2)}ms`);
       if (err) {
         console.error('Error:', err);
         alert(t('errorMessage'));
