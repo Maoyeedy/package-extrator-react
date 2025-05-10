@@ -1,4 +1,4 @@
-# [Package Extractor React](https://package-extractor.vercel.app/)
+# [Package Extractor React](https://package-extrator-react.vercel.app/)
 
 ## How to Use
 
