@@ -23,7 +23,7 @@ function App() {
   const [files, setFiles] = useState<ExtractedFileContent>({});
   const [excludeMeta, setExcludeMeta] = useState(true);
   const [categorizeByExtension, setCategorizeByExtension] = useState(true);
-  const [maintainStructure, setMaintainStructure] = useState(true);
+  const [maintainStructure, setMaintainStructure] = useState(false);
   const [enablePreview, setEnablePreview] = useState(true);
   const [showFileSize, setShowFileSize] = useState(true);
   const [language, setLanguage] = useState<Language>('en');
