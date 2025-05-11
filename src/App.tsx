@@ -24,7 +24,7 @@ function App() {
   const [excludeMeta, setExcludeMeta] = useState(true);
   const [categorizeByExtension, setCategorizeByExtension] = useState(true);
   const [maintainStructure, setMaintainStructure] = useState(false);
-  const [enablePreview, setEnablePreview] = useState(true);
+  const [enablePreview, setEnablePreview] = useState(false);
   const [showFileSize, setShowFileSize] = useState(true);
   const [language, setLanguage] = useState<Language>('en');
   const [isLoading, setIsLoading] = useState(false);

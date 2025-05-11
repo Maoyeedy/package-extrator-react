@@ -47,12 +47,14 @@ export function Controls({
         onChange={onMaintainStructureChange}
         label={t('maintainStructure')}
       />
-      <Checkbox
-        id="enablePreview"
-        checked={enablePreview}
-        onChange={onEnablePreviewChange}
-        label={t('enablePreview')}
-      />
+      <div style={{ display: 'none' }}>
+        <Checkbox
+          id="enablePreview"
+          checked={enablePreview}
+          onChange={onEnablePreviewChange}
+          label={t('enablePreview')}
+        />
+      </div>
       <Checkbox
         id="showFileSize"
         checked={showFileSize}
